@@ -6,6 +6,9 @@ export default function LoginForm({ onLoginSuccess }) {
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
 
+  // Use a dev-only password from Vite env; fallback to 'password' so the demo still works
+  const DEV_PASSWORD = import.meta.env.VITE_DEV_PASSWORD || 'password'
+
   function validate() {
     if (!email.trim() || !password.trim()) {
       setError('Email and password are required.')
@@ -28,13 +31,15 @@ export default function LoginForm({ onLoginSuccess }) {
     // Simulated API request (replace with real fetch/axios later)
     await new Promise((r) => setTimeout(r, 700))
 
-    // Fake success when password is "password" — just for demo
-    if (password === 'password') {
+    // Fake success when password matches the dev secret — just for demo
+    if (password === DEV_PASSWORD) {
       // store a fake token
       localStorage.setItem('authToken', 'fake-jwt-token')
       onLoginSuccess && onLoginSuccess({ email })
     } else {
-      setError('Invalid credentials (demo expects password = "password").')
+      setError(
+        `Invalid credentials. For this demo use the password defined in VITE_DEV_PASSWORD (default: "password").`
+      )
     }
 
     setLoading(false)

@@ -6,6 +6,8 @@ node_modules/
 .env.local
 .env.*.local
 .env.*
+# allow .env.example to be committed (exception must come after the matching patterns)
+!.env.example
 credentials.json
 *.key
 *.pem
