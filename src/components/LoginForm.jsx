@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
+import { login } from '../api/auth'
 
 export default function LoginForm({ onLoginSuccess }) {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
-
-  // Use a dev-only password from Vite env; fallback to 'password' so the demo still works
-  const DEV_PASSWORD = import.meta.env.VITE_DEV_PASSWORD || 'password'
 
   function validate() {
     if (!email.trim() || !password.trim()) {
@@ -28,18 +26,16 @@ export default function LoginForm({ onLoginSuccess }) {
     if (!validate()) return
     setLoading(true)
 
-    // Simulated API request (replace with real fetch/axios later)
-    await new Promise((r) => setTimeout(r, 700))
+    // Call real auth API
+    const result = await login(email, password)
 
-    // Fake success when password matches the dev secret — just for demo
-    if (password === DEV_PASSWORD) {
-      // store a fake token
-      localStorage.setItem('authToken', 'fake-jwt-token')
-      onLoginSuccess && onLoginSuccess({ email })
+    if (result.ok) {
+      // store token
+      localStorage.setItem('authToken', result.token)
+      onLoginSuccess && onLoginSuccess(result.user || { email })
     } else {
-      setError(
-        `Invalid credentials. For this demo use the password defined in VITE_DEV_PASSWORD (default: "password").`
-      )
+      // show server/network error
+      setError(result.error || 'Login failed')
     }
 
     setLoading(false)
