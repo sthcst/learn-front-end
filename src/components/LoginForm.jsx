@@ -41,6 +41,12 @@ export default function LoginForm({ onLoginSuccess }) {
     setLoading(false)
   }
 
+  function handleRetry() {
+    setError('')
+    setEmail('')
+    setPassword('')
+  }
+
   return (
     <section className="card">
       <h2>Login</h2>
@@ -51,6 +57,7 @@ export default function LoginForm({ onLoginSuccess }) {
           value={email}
           onChange={(e) => setEmail(e.target.value)}
           type="email"
+          disabled={loading}
         />
 
         <input
@@ -59,6 +66,7 @@ export default function LoginForm({ onLoginSuccess }) {
           value={password}
           onChange={(e) => setPassword(e.target.value)}
           type="password"
+          disabled={loading}
         />
 
         {error && <div className="text-display" role="alert">{error}</div>}
@@ -67,6 +75,15 @@ export default function LoginForm({ onLoginSuccess }) {
           <button className="btn btn-success" type="submit" disabled={loading}>
             {loading ? 'Signing in...' : 'Sign In'}
           </button>
+          {error && (
+            <button
+              className="btn btn-secondary"
+              type="button"
+              onClick={handleRetry}
+            >
+              Clear & Retry
+            </button>
+          )}
         </div>
       </form>
     </section>
