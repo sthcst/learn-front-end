@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { apiGet } from '../api/client'
 import { fetchProtectedData } from '../api/mockData'
+import ItemList from './ItemList'
 
 export default function Dashboard({ user, onLogout }) {
   const [items, setItems] = useState([])
@@ -40,7 +41,7 @@ export default function Dashboard({ user, onLogout }) {
       <h2>Dashboard</h2>
       <p className="text-display">Welcome back, {user?.email || 'user'}!</p>
 
-      <div style={{ marginBottom: 12 }}>
+      <div style={{ marginTop: 10 }}>
         <strong>Interactive counter:</strong>
         <div className="button-group" style={{ justifyContent: 'flex-start', marginTop: 8 }}>
           <button className="btn btn-secondary" onClick={() => setCount((c) => c - 1)}>-</button>
@@ -49,26 +50,12 @@ export default function Dashboard({ user, onLogout }) {
         </div>
       </div>
 
-      <div style={{ marginTop: 10 }}>
-        <strong>Protected data (mock):</strong>
-        <div style={{ marginTop: 8 }}>
-          {loading && <div className="text-muted">Loading data...</div>}
-          {error && <div className="text-display" role="alert">{error}</div>}
-          {!loading && !error && (
-            <ul>
-              {items.map((it) => (
-                <li key={it.id} className="text-display" style={{ marginBottom: 8 }}>
-                  <strong>{it.title}</strong>
-                  <div className="text-muted">{it.description}</div>
-                </li>
-              ))}
-            </ul>
-          )}
-        </div>
-        <div className="button-group">
-          <button className="btn btn-secondary" onClick={loadData} disabled={loading}>Refresh</button>
-        </div>
-      </div>
+      <ItemList
+        items={items}
+        loading={loading}
+        error={error}
+        onRefresh={loadData}
+      />
 
       <div className="button-group" style={{ marginTop: 18 }}>
         <button
