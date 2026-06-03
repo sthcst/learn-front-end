@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react'
+import { apiGet } from '../api/client'
 import { fetchProtectedData } from '../api/mockData'
 
 export default function Dashboard({ user, onLogout }) {
@@ -11,10 +12,18 @@ export default function Dashboard({ user, onLogout }) {
     setLoading(true)
     setError('')
     try {
-      const token = localStorage.getItem('authToken')
-      const data = await fetchProtectedData(token)
-      setItems(data)
+      // Try to fetch from real API first
+      const result = await apiGet('/items')
+      if (result.ok) {
+        setItems(result.data || [])
+      } else {
+        // Fall back to mock if API unavailable
+        console.warn('Real API unavailable, using mock data:', result.error)
+        const mockData = await fetchProtectedData(localStorage.getItem('authToken'))
+        setItems(mockData)
+      }
     } catch (err) {
+      console.warn('Error loading data:', err.message)
       setError(err.message || 'Failed to load data')
     } finally {
       setLoading(false)
